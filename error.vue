@@ -1,5 +1,5 @@
 <template>
-<div class="flex flex-col justify-center items-center h-screen">
+<div class="flex flex-col justify-center items-center h-screen" v-if="error">
     <div class="flex flex-col justify-center items-center">
         <h1 class="text-5xl">{{ error.statusCode }}</h1>
         <h1 class="text-9xl">{{ error.message }}</h1>
@@ -13,6 +13,8 @@
 <script setup>
 const error =useError();
 const handleError =() =>{
- navigateTo('/')
+ clearError({
+    redirect:'/'
+ })
 }
 </script>
