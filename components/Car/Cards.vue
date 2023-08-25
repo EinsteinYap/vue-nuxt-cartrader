@@ -1,20 +1,8 @@
-<template>
-  <div class="w-full">
-    <ClientOnly>
-        <CarCard
-          v-for="car in cars"
-          :key="car.id"
-          :car="car"
-          @favor="handleFavorite"
-          :favored="car.id in favorite"
-        />
-    </ClientOnly>
-  </div>
-</template>
-
 <script setup>
 const { cars } = useCars();
+
 const favorite = useLocalStorage("favorite", {});
+
 const handleFavorite = (id) => {
   if (id in favorite.value) {
     delete favorite.value[id];
@@ -26,3 +14,15 @@ const handleFavorite = (id) => {
   }
 };
 </script>
+
+<template>
+  <div class="w-full">
+    <CarCard
+      v-for="car in cars"
+      :key="car.id"
+      :car="car"
+      @favor="handleFavorite"
+      :favored="car.id in favorite"
+    />
+  </div>
+</template>

@@ -1,5 +1,5 @@
 <template>
-       <div class="mt-10">
+  <div class="mt-10">
     <div class="flex w-[600px] justify-between">
       <input type="text" class="border p-1" placeholder="Name" />
       <input type="text" class="border p-1" placeholder="Email" />
