@@ -20,9 +20,6 @@
       >
     </div>
     <div class="shadow rounded p-3 mt-5">
-      <div  v-for="listing in listings"
-        :key="listing.id"
-        :listing="listing">{{ listing.id }}</div>
       <CarListingCard
         v-for="listing in listings"
         :key="listing.id"

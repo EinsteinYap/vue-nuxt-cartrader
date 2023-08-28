@@ -5,7 +5,7 @@ const props = defineProps({
   car: Object,
   favored: Boolean,
 });
-
+const config = useRuntimeConfig();
 const emit = defineEmits(["favor"]);
 </script>
 
@@ -29,7 +29,7 @@ const emit = defineEmits(["favor"]);
       @click="emit('favor', car.id)"
     />
     <div class="flex h-full" @click="navigateTo(`/car/${car.name}-${car.id}`)">
-      <NuxtImg :src="car.url" class="w-[300px] h-full" />
+      <NuxtImg :src="`${config.public.supabase.url}/storage/v1/object/public/images/${car.image}`" class="w-[300px] h-full" />
       <div class="p-4 flex flex-col">
         <div>
           <h1 class="text-2xl text-blue-700">{{ car.name }}</h1>

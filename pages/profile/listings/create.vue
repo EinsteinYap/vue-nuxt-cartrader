@@ -6,7 +6,8 @@ definePageMeta({
 
 const { makes } = useCars();
 const user = useSupabaseUser();
-const errorMesssage = ref("");
+const supabase = useSupabaseClient();
+const errorMessage = ref("");
 const info = useState("adInfo", () => {
   return {
     make: "",
@@ -18,7 +19,7 @@ const info = useState("adInfo", () => {
     seats: "",
     features: "",
     description: "",
-    image: "testing@url.com",
+    image: null,
   };
 });
 
@@ -77,31 +78,39 @@ const isButtonDisable = computed(() => {
   }
   return false;
 });
-const handleSubmit= async () =>{
-  const body ={
+const handleSubmit = async () => {
+  const fileName = Math.floor(Math.random() * 100000000000000000000000);
+  const { data, error } = await supabase.storage
+    .from("images")
+    .upload("public/" + fileName, info.value.image);
+    if(error){
+      return (errorMessage.value = "cannot upload image")
+    }
+  const body = {
     ...info.value,
-    city:info.value.city.toLocaleLowerCase(),
-    features:info.value.features.split(", "),
-    numberOfSeats:parseInt(info.value.seats),
-    miles:parseInt(info.value.miles),
-    price:parseInt(info.value.price),
-    year:parseInt(info.value.year),
-    name:`${info.value.make} ${info.value.model}`,
-    listerId:user.value.id,
-    image:"testing"
-  }
+    city: info.value.city.toLocaleLowerCase(),
+    features: info.value.features.split(", "),
+    numberOfSeats: parseInt(info.value.seats),
+    miles: parseInt(info.value.miles),
+    price: parseInt(info.value.price),
+    year: parseInt(info.value.year),
+    name: `${info.value.make} ${info.value.model}`,
+    listerId: user.value.id,
+    image: data.path,
+  };
   delete body.seats;
 
-  try{
-    const response =await $fetch("/api/car/listings",{
-      method:"post",
-      body
-    })
-    navigateTo('/profile/listings')
-  } catch(err){
-      errorMesssage.value = err.statusMessage
+  try {
+    const response = await $fetch("/api/car/listings", {
+      method: "post",
+      body,
+    });
+    navigateTo("/profile/listings");
+  } catch (err) {
+    errorMessage.value = err.statusMessage;
+    await supabase.storage.from("images").remove(data.path);
   }
-}
+};
 </script>
 
 <template>

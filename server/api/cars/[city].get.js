@@ -26,7 +26,7 @@ export default defineEventHandler((event)=>{
         filters.price.lte =parseInt(maxPrice)
          }
     
-         return filters; // for demo in postman
+        //  return filters; // for demo in postman
       
       return prisma.car.findMany(
         {
