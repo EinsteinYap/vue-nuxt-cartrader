@@ -10,11 +10,14 @@
 <script setup>
 const route = useRoute();
 const {data:car } = await useFetchCar(route.params.id)
-
+const user =useSupabaseUser();
 useHead({ 
   title:route.params.name 
     })
 definePageMeta({
   layout:'custom'
 });
+onMounted =() =>{
+  console.log('user Id ' , this.user)
+}
 </script>
