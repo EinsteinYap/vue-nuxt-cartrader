@@ -1,13 +1,12 @@
 <script setup>
 definePageMeta({
   layout: "custom",
-  middleware:[
-   'auth'
-  ]
+  middleware: ["auth"],
 });
 
 const { makes } = useCars();
-
+const user = useSupabaseUser();
+const errorMesssage = ref("");
 const info = useState("adInfo", () => {
   return {
     make: "",
@@ -19,7 +18,7 @@ const info = useState("adInfo", () => {
     seats: "",
     features: "",
     description: "",
-    image: null,
+    image: "testing@url.com",
   };
 });
 
@@ -42,31 +41,68 @@ const inputs = [
   },
   {
     id: 3,
+    title: "Price *",
+    name: "price",
+    placeholder: "10000",
+  },
+  {
+    id: 4,
     title: "Miles *",
     name: "miles",
     placeholder: "10000",
   },
   {
-    id: 4,
+    id: 5,
     title: "City *",
     name: "city",
     placeholder: "Austin",
   },
   {
-    id: 5,
+    id: 6,
     title: "Number of Seats *",
     name: "seats",
     placeholder: "5",
   },
   {
-    id: 6,
+    id: 7,
     title: "Features *",
     name: "features",
     placeholder: "Leather Interior, No Accidents",
   },
 ];
-</script>
 
+const isButtonDisable = computed(() => {
+  for (let key in info.value) {
+    if (!info.value[key]) return true;
+  }
+  return false;
+});
+const handleSubmit= async () =>{
+  const body ={
+    ...info.value,
+    city:info.value.city.toLocaleLowerCase(),
+    features:info.value.features.split(", "),
+    numberOfSeats:parseInt(info.value.seats),
+    miles:parseInt(info.value.miles),
+    price:parseInt(info.value.price),
+    year:parseInt(info.value.year),
+    name:`${info.value.make} ${info.value.model}`,
+    listerId:user.value.id,
+    image:"testing"
+  }
+  delete body.seats;
+
+  try{
+    const response =await $fetch("/api/car/listings",{
+      method:"post",
+      body
+    })
+    navigateTo('/profile/listings')
+  } catch(err){
+      errorMesssage.value = err.statusMessage
+  }
+}
+</script>
 
 <template>
   <div>
@@ -95,6 +131,16 @@ const inputs = [
         @change-input="onChangeInput"
       />
       <CarAdImage @change-input="onChangeInput" />
+      <div>
+        <button
+          :disabled="isButtonDisable"
+          @click="handleSubmit"
+          class="bg-blue-400 text-white rounded py-2 px-7 mt-3"
+        >
+          Submit
+        </button>
+        <p v-if="errorMessage" class="mt-3 text-red-400">{{ errorMessage }}</p>
+      </div>
     </div>
   </div>
 </template>
